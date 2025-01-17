@@ -9,8 +9,8 @@ M = 6
 test_images = []
 
 #need to figure out the aspect ratio
-height = 300
-width = 300
+# height = 300
+# width = 300
 
 #disparity parameters
 disparity_range = [0, 64]
@@ -32,14 +32,14 @@ def gray_to_binary(gray_code):
         binary_code = binary_code + str(int(binary_code[-1]) ^ int(gray_code[i]))
     return int(binary_code, 2)
 
-img_new = cv2.imread("NORMAL00007.jpg", cv2.IMREAD_GRAYSCALE)
-height_new, width_new = img_new.shape
 
-def decode_gray(test_images):
+
+def decode_gray(test_images, height, width):
 
     # height, width = test_images[0].shape
 
     gray_code = np.zeros((M, height, width), dtype=int)
+
 
     for x in range(M):
         for col in range(height):
@@ -86,17 +86,29 @@ def decode_gray(test_images):
 
 def main():
     for x in range(M):
-        filename = f"IMG_{x + 4360 }.jpg"
+        filename = f"IMG_{x + 4360 }.JPG"
         img = cv2.imread(filename)
+        if img is None:
+            raise FileNotFoundError(f"Image not found: {filename}")
         img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        height_new, width_new, channel = img.shape
+
+        width_final = 400
+        aspect_ratio = height_new/width_new
+        height_final = int(width_final*aspect_ratio)
+
+        print(height_final)
+
         #need to find a correct sizing (i think the actual one is 2250, 22500 or something like that, insane
-        K = cv2.resize(img_grey, (height, width))
+        K = cv2.resize(img_grey, (width_final, height_final))
         test_images.append(K)
 
-        cv2.imshow("img", test_images[x])
+        print(test_images[x].shape)
 
-    right_image = decode_gray(test_images)
-    cv2.imshow("Original", right_image)
+        cv2.imshow("test", test_images[x])
+
+    right_image = decode_gray(test_images, height_final, width_final)
+    cv2.imshow("decoded", right_image)
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()
