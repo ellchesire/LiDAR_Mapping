@@ -5,6 +5,7 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 
+
 M = 6
 test_images = []
 
@@ -44,8 +45,10 @@ def decode_gray(test_images, height, width):
     for x in range(M):
         for col in range(height):
             for row in range(width):
+
                 pixel_value = test_images[x][col, row] / 255.0
-                #need a better algorithmn for this as well...
+
+                #need a better algorithmn for this as well... this is not ideal
                 gray_code[x, col, row] = 0 if pixel_value > 0.5 else 1
 
 
@@ -63,6 +66,7 @@ def decode_gray(test_images, height, width):
 
     # cv2.imshow("Altered", binary_sequence_left.astype(np.uint8))
     # cv2.imshow("Original", binary_sequence.astype(np.uint8))
+
 
     image = binary_sequence.astype(np.uint8)
 
@@ -93,7 +97,7 @@ def main():
         img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         height_new, width_new, channel = img.shape
 
-        width_final = 400
+        width_final = 300
         aspect_ratio = height_new/width_new
         height_final = int(width_final*aspect_ratio)
 
@@ -103,12 +107,20 @@ def main():
         K = cv2.resize(img_grey, (width_final, height_final))
         test_images.append(K)
 
-        print(test_images[x].shape)
 
-        cv2.imshow("test", test_images[x])
+    cv2.imshow("test", test_images[0])
+    cv2.imshow("test1", test_images[1])
+    cv2.imshow("test2", test_images[2])
+    cv2.imshow("test3", test_images[3])
+    cv2.imshow("test4", test_images[4])
+    cv2.imshow("test5", test_images[5])
 
-    right_image = decode_gray(test_images, height_final, width_final)
-    cv2.imshow("decoded", right_image)
+
+    binary_code = decode_gray(test_images, height_final, width_final)
+
+    normalized_gray = (binary_code / binary_code.max() * 255).astype(np.uint8)
+
+    cv2.imshow("decoded", normalized_gray)
 
     cv2.waitKey(0)
     cv2.destroyAllWindows()
