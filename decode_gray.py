@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 import random
 import matplotlib.pyplot as plt
-from sympy.physics.quantum.gate import normalized
+
 
 M = 6
 test_images = []
@@ -106,8 +106,6 @@ def main():
         #need to find a correct sizing (i think the actual one is 2250, 22500 or something like that, insane
         K = cv2.resize(img_grey, (width_final, height_final))
         test_images.append(K)
-
-
 
 
     cv2.imshow("test", test_images[0])
