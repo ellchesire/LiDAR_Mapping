@@ -1,8 +1,9 @@
 import numpy as np
 import cv2 as cv
+#TO DO: HAVE THE ACTUAL SIZE OF THE CHECKERBOARD SQUARES
 
-M = 13
-chess = (6,9)
+M = 18
+chess = (6,8)
 
 # termination criteria
 criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -14,22 +15,11 @@ objpoints = []
 imgpoints = []
 
 for x in range(M):
-    filename = f"checker{x + 1 }.JPG"
+    filename = f"NORMAL{x + 92:05d}.JPG"
     #1, 11
 
     img = cv.imread(filename)
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
-
-
-    # cv.imshow("Gray Image", img_gray)
-    #
-    # cv.waitKey(0)
-    # Find the chess board corners
-
-    # test_image = cv.imread('img.png')
-    # gray = cv.cvtColor(test_image, cv.COLOR_BGR2GRAY)
-    # ret, corners = cv.findChessboardCorners(gray, (6, 9), None)
-    # print("Test Chessboard detection result:", ret)
 
     ret, corners = cv.findChessboardCorners(gray, (chess[0], chess[1]), None)
 
@@ -43,7 +33,8 @@ for x in range(M):
 
         # Draw and display the corners
         cv.drawChessboardCorners(img, (chess[0], chess[1]), corners2, ret)
-        cv.imshow('img', img)
+        cv.namedWindow("output", cv.WINDOW_NORMAL)
+        cv.imshow("output", img)
         cv.waitKey(0)
 
 
