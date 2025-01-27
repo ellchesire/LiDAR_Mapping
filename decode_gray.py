@@ -16,7 +16,7 @@ def visualize_projector_mapping(camera_to_projector_mapping, axis='x'):
     if axis not in ['x', 'y']:
         raise ValueError("Axis must be 'x' or 'y'.")
 
-    coord_index = 0 if axis == 'x' else 1
+    coord_index = 1 if axis == 'x' else 0
     projector_coords = camera_to_projector_mapping[:, :, coord_index]
 
 
@@ -94,9 +94,9 @@ def decode_gray(test_images, height, width):
 
 def main():
 
-    for x in range(M):
-        #filename = f"gray_code_images/NORMAL{x + 50:05d}.JPG"
-        filename = f"IMG_{x+4360}.JPG"
+    for x in range(M*2):
+        filename = f"gray_code_images/NORMAL{x + 50:05d}.JPG"
+        #filename = f"IMG_{x+4360}.JPG"
         img = cv2.imread(filename)
         if img is None:
             raise FileNotFoundError(f"Image not found: {filename}")
@@ -115,17 +115,17 @@ def main():
 
     #cv2.imshow("good camera", binary_code.astype(np.uint8))
 
-    binary = decode_gray(test_images, height_final, width_final)
+    #binary = decode_gray(test_images, height_final, width_final)
 
-    combine = np.stack((binary, binary,np.zeros_like(binary)), axis=-1)
+    #combine = np.stack((binary, binary,np.zeros_like(binary)), axis=-1)
 
-    #binary_code_hori = decode_gray(test_images[0:M-1], height_final, width_final)
-    #binary_code_veri = decode_gray(test_images[M:-1], height_final, width_final)
+    binary_code_hori = decode_gray(test_images[0:M-1], height_final, width_final)
+    binary_code_veri = decode_gray(test_images[M:-1], height_final, width_final)
 
     #
-    #decoded_combine = np.stack((binary_code_hori, binary_code_veri,np.zeros_like(binary_code_hori)), axis=-1)
+    decoded_combine = np.stack((binary_code_hori, binary_code_veri,np.zeros_like(binary_code_hori)), axis=-1)
 
-    visualize_projector_mapping(combine, axis = 'x')
+    visualize_projector_mapping(decoded_combine, axis = 'y')
     #
     # plt.figure(figsize=(8, 8))
     # plt.imshow(decoded_combine)
