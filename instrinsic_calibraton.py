@@ -4,8 +4,8 @@ import cv2 as cv
 
 
 def calibration():
-    M = 18
-    chess = (6,8)
+    M = 9
+    chess = (5,5)
 
     # termination criteria
     criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -17,7 +17,7 @@ def calibration():
     imgpoints = []
 
     for x in range(M):
-        filename = f"NORMAL{x + 92:05d}.JPG"
+        filename = f"IMG_{x+4555}.JPG"
         #1, 11
 
         img = cv.imread(filename)
@@ -46,3 +46,4 @@ def calibration():
     return mtx
 
 
+calibration()

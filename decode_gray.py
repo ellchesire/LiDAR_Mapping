@@ -1,5 +1,5 @@
 
-import open3d as o3d
+#import open3d as o3d
 import cv2
 import numpy as np
 import random
@@ -16,7 +16,7 @@ def visualize_projector_mapping(camera_to_projector_mapping, axis='x'):
     if axis not in ['x', 'y']:
         raise ValueError("Axis must be 'x' or 'y'.")
 
-    coord_index = 1 if axis == 'x' else 0
+    coord_index = 0 if axis == 'x' else 1
     projector_coords = camera_to_projector_mapping[:, :, coord_index]
 
 
@@ -93,14 +93,19 @@ def decode_gray(test_images, height, width):
 
 
 def main():
-
+    contrast = 5
+    brightness = 0
     for x in range(M*2):
-        filename = f"gray_code_images/NORMAL{x + 50:05d}.JPG"
-        #filename = f"IMG_{x+4360}.JPG"
+        #filename = f"gray_code_images/NORMAL{x + 50:05d}.JPG"
+        filename = f"IMG_{x+4471}.JPG"
         img = cv2.imread(filename)
         if img is None:
             raise FileNotFoundError(f"Image not found: {filename}")
-        img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        image_con = cv2.addWeighted(img, contrast, np.zeros(img.shape, img.dtype), 0, brightness)
+        cv2.namedWindow("output", cv2.WINDOW_NORMAL)
+        cv2.imshow("output", image_con)
+        cv2.waitKey(1000)
+        img_grey = cv2.cvtColor(image_con, cv2.COLOR_BGR2GRAY)
         height_new, width_new, channel = img.shape
 
         width_final = 300
@@ -125,7 +130,7 @@ def main():
     #
     decoded_combine = np.stack((binary_code_hori, binary_code_veri,np.zeros_like(binary_code_hori)), axis=-1)
 
-    visualize_projector_mapping(decoded_combine, axis = 'y')
+    visualize_projector_mapping(decoded_combine, axis = 'x')
     #
     # plt.figure(figsize=(8, 8))
     # plt.imshow(decoded_combine)
