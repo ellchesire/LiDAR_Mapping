@@ -1,10 +1,11 @@
 
-
+import open3d as o3d
 import cv2
 import numpy as np
 import random
 import matplotlib.pyplot as plt
-
+from depthMap import triangulate_points
+from instrinsic_calibraton import calibration
 M = 6
 test_images = []
 
@@ -71,30 +72,39 @@ def main():
         test_images.append(K)
 
 
-    # cv2.imshow("test", test_images[0])
-    # cv2.imshow("test1", test_images[1])
-    # cv2.imshow("test2", test_images[2])
-    # cv2.imshow("test3", test_images[3])
-    # cv2.imshow("test4", test_images[4])
-    # cv2.imshow("test5", test_images[5])
-
     #binary_code = decode_gray(test_images,height_final, width_final)
 
     #cv2.imshow("good camera", binary_code.astype(np.uint8))
 
     binary_code_hori = decode_gray(test_images[0:M-1], height_final, width_final)
     binary_code_veri = decode_gray(test_images[M:-1], height_final, width_final)
+
+
     #
-    decoded_combine = np.stack((binary_code_hori, binary_code_veri,np.zeros_like(binary_code_hori)), axis=-1)
+    # decoded_combine = np.stack((binary_code_hori, binary_code_veri,np.zeros_like(binary_code_hori)), axis=-1)
+    #
+    # plt.figure(figsize=(8, 8))
+    # plt.imshow(decoded_combine)
+    # plt.title("decoded layered")
+    # plt.show()
+    #
+    # # cv2.imshow("badcamera", binary_code_veri.astype(np.uint8))
+    # cv2.waitKey(0)
+    # cv2.destroyAllWindows()
 
-    plt.figure(figsize=(8, 8))
-    plt.imshow(decoded_combine)
-    plt.title("decoded layered")
-    plt.show()
+    camera_mtx = calibration()
+    #placeholder
+    proj_mtx = np.array([[850, 0, 340], [0, 900, 360], [0, 0, 1]], dtype=np.float32)
+    R_camera = np.eye(3)
+    t_camera = np.zeros((3, 1))
 
-    # cv2.imshow("badcamera", binary_code_veri.astype(np.uint8))
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    print(R_camera)
+    print(t_camera)
+    points = triangulate_points(binary_code_hori, binary_code_veri, camera_mtx, proj_mtx, R_camera, t_camera)
+    print(points)
+
+
+
 
 if __name__ == '__main__':
     main()
