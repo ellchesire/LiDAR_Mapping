@@ -4,8 +4,8 @@ import cv2
 import numpy as np
 import random
 import matplotlib.pyplot as plt
-from depthMap import triangulate_points
-from instrinsic_calibraton import calibration
+# from depthMap import triangulate_points
+# from instrinsic_calibraton import calibration
 from matplotlib.colors import ListedColormap, BoundaryNorm
 
 
