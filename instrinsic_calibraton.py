@@ -1,11 +1,12 @@
 import numpy as np
 import cv2 as cv
+import pickle
 #TO DO: HAVE THE ACTUAL SIZE OF THE CHECKERBOARD SQUARES
 
 
 def calibration():
-    M = 9
-    chess = (5,5)
+    M = 3
+    chess = (6,8)
 
     # termination criteria
     criteria = (cv.TERM_CRITERIA_EPS + cv.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -17,7 +18,8 @@ def calibration():
     imgpoints = []
 
     for x in range(M):
-        filename = f"IMG_{x+4555}.JPG"
+        #filename = f"IMG_{x+4555}.JPG"
+        filename = f"NORMAL{x+92:05d}.jpg"
         #1, 11
 
         img = cv.imread(filename)
@@ -33,17 +35,19 @@ def calibration():
             corners2 = cv.cornerSubPix(gray, corners, (11, 11), (-1, -1), criteria)
             imgpoints.append(corners2)
             cv.drawChessboardCorners(img, (chess[0], chess[1]), corners2, ret)
-            # cv.namedWindow("output", cv.WINDOW_NORMAL)
-            # cv.imshow("output", img)
-            # cv.waitKey(0)
-            # Draw and display the corners
+            cv.namedWindow("output", cv.WINDOW_NORMAL)
+            cv.imshow("output", img)
+            cv.waitKey(0)
+            #Draw and display the corners
             #
 
 
     ret, mtx, dist, rvecs, tvecs = cv.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
     print(ret)
 
-    return mtx
-
+    f= open('camera_calibration', 'wb')
+    pickle.dump(mtx, f)
+    pickle.dump(dist, f)
+    f.close()
 
 calibration()

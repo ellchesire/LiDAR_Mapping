@@ -4,31 +4,28 @@ import cv2
 import numpy as np
 import random
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 # from depthMap import triangulate_points
 # from instrinsic_calibraton import calibration
-from matplotlib.colors import ListedColormap, BoundaryNorm
-
+from matplotlib.colors import ListedColormap, BoundaryNorm, from_levels_and_colors
 
 M = 6
 test_images = []
 
 def visualize_projector_mapping(camera_to_projector_mapping, axis='x'):
-    if axis not in ['x', 'y']:
-        raise ValueError("Axis must be 'x' or 'y'.")
 
     coord_index = 0 if axis == 'x' else 1
     projector_coords = camera_to_projector_mapping[:, :, coord_index]
 
-
     valid_mask = projector_coords >= 0
     projector_coords[~valid_mask] = -1
-
 
     unique_values = np.unique(projector_coords[valid_mask])
     num_unique_values = len(unique_values)
 
-    cmap = plt.cm.get_cmap('tab20', num_unique_values)  # Use a discrete colormap with unique colors
-    norm = BoundaryNorm(boundaries=np.arange(-1, num_unique_values), ncolors=num_unique_values)
+
+    cmap = plt.cm.gist_rainbow
+    norm = mpl.colors.Normalize(vmin=0, vmax=num_unique_values-1)
 
 
     value_to_index = {v: i for i, v in enumerate(unique_values)}
@@ -40,17 +37,19 @@ def visualize_projector_mapping(camera_to_projector_mapping, axis='x'):
 
 
     plt.figure(figsize=(10, 6))
-    plt.title(f"Projector {axis}-coordinate Mapping (Unique Values)")
+    plt.title(f"{axis}")
     im = plt.imshow(indexed_map, cmap=cmap, norm=norm)
     plt.axis('off')
 
 
-    cbar = plt.colorbar(im, orientation='vertical', ticks=np.arange(num_unique_values))
-    cbar.ax.set_yticklabels(unique_values)
-    cbar.set_label(f"Projector {axis}-coordinate")
+    # cbar = plt.colorbar(im, orientation='vertical', ticks=np.arange(num_unique_values))
+    # cbar.ax.set_yticklabels(unique_values)
+    # cbar.set_label(f"{axis}-coordinate")
     plt.show()
 
-# relook at this
+
+
+
 def gray_to_binary(gray_code):
     binary_code = gray_code[0]
     for i in range(1, len(gray_code)):
@@ -86,26 +85,23 @@ def decode_gray(test_images, height, width):
             binary_sequence[col, row] = gray_to_binary(gray_code_sequence[col, row])
 
 
-    # cv2.imshow("Altered", binary_sequence_left.astype(np.uint8))
-    # cv2.imshow("Original", binary_sequence.astype(np.uint8))
-
     return binary_sequence
 
 
 def main():
-    contrast = 5
-    brightness = 0
+    # contrast = 5
+    # brightness = 0
     for x in range(M*2):
         #filename = f"gray_code_images/NORMAL{x + 50:05d}.JPG"
-        filename = f"IMG_{x+4471}.JPG"
+        filename = f"gray_code_images/IMG_{x+4527}.JPG"
         img = cv2.imread(filename)
         if img is None:
             raise FileNotFoundError(f"Image not found: {filename}")
-        image_con = cv2.addWeighted(img, contrast, np.zeros(img.shape, img.dtype), 0, brightness)
-        cv2.namedWindow("output", cv2.WINDOW_NORMAL)
-        cv2.imshow("output", image_con)
-        cv2.waitKey(1000)
-        img_grey = cv2.cvtColor(image_con, cv2.COLOR_BGR2GRAY)
+        # image_con = cv2.addWeighted(img, contrast, np.zeros(img.shape, img.dtype), 0, brightness)
+        # cv2.namedWindow("output", cv2.WINDOW_NORMAL)
+        # cv2.imshow("output", image_con)
+        # cv2.waitKey(1000)
+        img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         height_new, width_new, channel = img.shape
 
         width_final = 300
@@ -131,6 +127,7 @@ def main():
     decoded_combine = np.stack((binary_code_hori, binary_code_veri,np.zeros_like(binary_code_hori)), axis=-1)
 
     visualize_projector_mapping(decoded_combine, axis = 'x')
+    visualize_projector_mapping(decoded_combine, axis='y')
     #
     # plt.figure(figsize=(8, 8))
     # plt.imshow(decoded_combine)
