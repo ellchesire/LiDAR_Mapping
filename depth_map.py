@@ -24,8 +24,8 @@ def triangulate_points(horizontal_indices, vertical_indices, cam_mtx, proj_mtx, 
             cam_point = np.array([u_cam, v_cam, 1.0])
             proj_point = np.array([u_proj, v_proj, 1.0])
 
-            point_3D_homo = cv2.triangulatePoints(P_cam, P_proj, cam_point[:2], proj_point[:2])
-            point_3D = point_3D_homo[:3] / point_3D_homo[3]
+            point_3D_homog = cv2.triangulatePoints(P_cam, P_proj, cam_point[:2], proj_point[:2])
+            point_3D = point_3D_homog[:3] / point_3D_homog[3]
             points_3D.append(point_3D)
 
     return np.array(points_3D).reshape((height, width, 3))
