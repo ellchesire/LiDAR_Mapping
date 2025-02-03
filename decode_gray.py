@@ -74,6 +74,7 @@ def decode_gray(test_images, height, width):
                 gray_code[x, col, row] = 0 if pixel_value > 0.5 else 1
 
 
+
     gray_code_sequence = np.empty((height, width), dtype=object)
     binary_sequence = np.zeros((height, width), dtype=int)
 
@@ -88,7 +89,7 @@ def decode_gray(test_images, height, width):
     return binary_sequence
 
 
-def main():
+def decoding_main():
     # contrast = 5
     # brightness = 0
     for x in range(M*2):
@@ -123,8 +124,11 @@ def main():
     binary_code_hori = decode_gray(test_images[0:M-1], height_final, width_final)
     binary_code_veri = decode_gray(test_images[M:-1], height_final, width_final)
 
+
+
     #
     decoded_combine = np.stack((binary_code_hori, binary_code_veri,np.zeros_like(binary_code_hori)), axis=-1)
+
 
     visualize_projector_mapping(decoded_combine, axis = 'x')
     visualize_projector_mapping(decoded_combine, axis='y')
@@ -149,8 +153,5 @@ def main():
     # points = triangulate_points(binary_code_hori, binary_code_veri, camera_mtx, proj_mtx, R_camera, t_camera)
     # print(points)
 
+    return binary_code_hori, binary_code_hori
 
-
-
-if __name__ == '__main__':
-    main()
