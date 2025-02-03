@@ -5,7 +5,7 @@ from decode_gray import decode_gray
 
 
 M = 6
-positions = 1
+positions = 2
 chessboard = (5,5)
 
 
@@ -59,7 +59,7 @@ def project_img_coords(corners, homographies):
 
     return projector_corners
 
-
+#unneeded for now
 def proj_calibration(img_corners):
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
     objp = np.zeros((chessboard[0] * chessboard[1], 3), np.float32)
@@ -79,6 +79,9 @@ def proj_calibration(img_corners):
 
 
 def main():
+    objp = np.zeros((chessboard[0] * chessboard[1], 3), np.float32)
+    objp[:, :2] = np.mgrid[0:chessboard[0], 0:chessboard[1]].T.reshape(-1, 2)
+
     img_org = cv2.imread("IMG_4458.JPG")
     height_new, width_new, channel = img_org.shape
 
@@ -117,10 +120,10 @@ def main():
         binary_code_hori = decode_gray(image_groups[y,0:M-1], height_final, width_final)
         binary_code_veri = decode_gray(image_groups[y,M:-1], height_final, width_final)
 
-        cv2.imshow("veri", binary_code_veri.astype(np.uint8))
-        cv2.imshow("hori", binary_code_hori.astype(np.uint8))
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        # cv2.imshow("veri", binary_code_veri.astype(np.uint8))
+        # cv2.imshow("hori", binary_code_hori.astype(np.uint8))
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
 
         decoded_combine = np.stack((binary_code_hori, binary_code_veri), axis=-1)
 
@@ -128,12 +131,12 @@ def main():
         homog = local_homographies(gray, corners_squeezed, decoded_combine)
         project_coords = project_img_coords(corners_squeezed, homog)
 
-
-        objp, imgp = proj_calibration(project_coords)
         objpoints_full.append(objp)
-        imgpoints_full.append(imgp)
+        imgpoints_full.append(np.array(project_coords, dtype=np.float32).reshape(-1, 1, 2))
 
-    ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints_full, imgpoints_full, img_org.shape[::-1], None, None)
+
+
+    ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints_full, imgpoints_full, gray.shape[::-1], None, None)
     print(ret)
 
     f = open('projector_calibration', 'wb')
