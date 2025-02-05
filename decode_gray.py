@@ -86,6 +86,9 @@ def decode_gray(test_images, height, width):
             binary_sequence[col, row] = gray_to_binary(gray_code_sequence[col, row])
 
 
+    #cv2.imshow("Altered", binary_sequence_left.astype(np.uint8))
+    #cv2.imshow("Original", binary_sequence.astype(np.uint8))
+
     return binary_sequence
 
 
@@ -112,6 +115,13 @@ def decoding_main():
         K = cv2.resize(img_grey, (width_final, height_final))
         test_images.append(K)
 
+
+    #cv2.imshow("test", test_images[0])
+    #cv2.imshow("test1", test_images[1])
+    # cv2.imshow("test2", test_images[2])
+    # cv2.imshow("test3", test_images[3])
+    # cv2.imshow("test4", test_images[4])
+    # cv2.imshow("test5", test_images[5])
 
     #binary_code = decode_gray(test_images,height_final, width_final)
 
