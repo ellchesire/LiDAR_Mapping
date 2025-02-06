@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import pickle
 from decode_gray import  decoding_main
-
+import matplotlib.pyplot as plt
 chessboard = (5,5)
 
 def triangulate_points(horizontal_indices, vertical_indices, cam_mtx, proj_mtx, R, T):
@@ -79,7 +79,15 @@ def main():
 
     hori, veri = decoding_main()
 
-    triangulate_points(hori, veri, cam_mtx, proj_mtx, R, T)
+    points = triangulate_points(hori, veri, cam_mtx, proj_mtx, R, T)
+
+    depth_map = points[:, :, 2]
+
+    plt.figure(figsize=(8, 6))
+    plt.imshow(depth_map, cmap='jet', interpolation='nearest')
+    plt.colorbar(label="depth")
+    plt.title("depth map")
+    plt.show()
 
 
 

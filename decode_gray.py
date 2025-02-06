@@ -5,8 +5,7 @@ import numpy as np
 import random
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-# from depthMap import triangulate_points
-# from instrinsic_calibraton import calibration
+
 from matplotlib.colors import ListedColormap, BoundaryNorm, from_levels_and_colors
 
 M = 6
@@ -137,7 +136,7 @@ def decoding_main():
 
 
     #
-    decoded_combine = np.stack((binary_code_hori, binary_code_veri,np.zeros_like(binary_code_hori)), axis=-1)
+    decoded_combine = np.stack((binary_code_hori, binary_code_veri), axis=-1)
 
 
     visualize_projector_mapping(decoded_combine, axis = 'x')
@@ -165,3 +164,4 @@ def decoding_main():
 
     return binary_code_hori, binary_code_hori
 
+decoding_main()
