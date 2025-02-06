@@ -31,13 +31,21 @@ def main():
     test_images = []
     print("Loading images...")  # Debugging
     for x in range(6):
-        filename = f"gray_code_images/NORMAL{x + 50:05d}.JPG"
+        filename = f"gray_code_images/IMG_{x+4527}.JPG"
         img = cv2.imread(filename)
         if img is None:
             raise FileNotFoundError(f"Image not found: {filename}")
         print(f"Loaded {filename}")  # Debugging statement
+
+        height_new, width_new, channel = img.shape
+
+        width_final = 300
+        aspect_ratio = height_new / width_new
+        height_final = int(width_final * aspect_ratio)
         img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        test_images.append(img_grey)
+        K = cv2.resize(img_grey, (width_final, height_final))
+
+        test_images.append(K)
 
     if not test_images:
         print("No images loaded")

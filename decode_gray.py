@@ -56,38 +56,57 @@ def gray_to_binary(gray_code):
     return int(binary_code, 2)
 
 
+#old code
+# def decode_gray(test_images, height, width):
+#
+#     # height, width = test_images[0].shape
+#
+#     gray_code = np.zeros((M, height, width), dtype=int)
+#
+#     for x in range(M-1):
+#         for col in range(height):
+#             for row in range(width):
+#
+#                 pixel_value = test_images[x][col, row] / 255.0
+#
+#                 #need a better algorithmn for this as well... this is not ideal
+#                 gray_code[x, col, row] = 0 if pixel_value > 0.5 else 1
+#
+#
+#
+#     gray_code_sequence = np.empty((height, width), dtype=object)
+#     binary_sequence = np.zeros((height, width), dtype=int)
+#
+#
+#
+#     for col in range(height):
+#         for row in range(width):
+#             gray_code_sequence[col, row] = ''.join(str(gray_code[x, col, row]) for x in range(M))
+#             binary_sequence[col, row] = gray_to_binary(gray_code_sequence[col, row])
+#
+#
+#     #cv2.imshow("Altered", binary_sequence_left.astype(np.uint8))
+#     #cv2.imshow("Original", binary_sequence.astype(np.uint8))
+#
+#     return binary_sequence
 
-def decode_gray(test_images, height, width):
+def decode_gray_otsu(test_images, height, width):
+    print("Decoding images...")
+    gray_code = np.zeros((len(test_images), height, width), dtype=int)
 
-    # height, width = test_images[0].shape
-
-    gray_code = np.zeros((M, height, width), dtype=int)
-
-    for x in range(M-1):
-        for col in range(height):
-            for row in range(width):
-
-                pixel_value = test_images[x][col, row] / 255.0
-
-                #need a better algorithmn for this as well... this is not ideal
-                gray_code[x, col, row] = 0 if pixel_value > 0.5 else 1
-
-
+    for x, img in enumerate(test_images):
+        # Calculate threshold using Otsu's method and apply it
+        _, thresh_image = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+        gray_code[x] = thresh_image / 255  # Normalize to 0 and 1
 
     gray_code_sequence = np.empty((height, width), dtype=object)
     binary_sequence = np.zeros((height, width), dtype=int)
 
-
-
     for col in range(height):
         for row in range(width):
-            gray_code_sequence[col, row] = ''.join(str(gray_code[x, col, row]) for x in range(M))
+            gray_code_sequence[col, row] = ''.join(str(gray_code[x, col, row]) for x in range(len(test_images)))
             binary_sequence[col, row] = gray_to_binary(gray_code_sequence[col, row])
-
-
-    #cv2.imshow("Altered", binary_sequence_left.astype(np.uint8))
-    #cv2.imshow("Original", binary_sequence.astype(np.uint8))
-
+    cv2.imshow("Original", binary_sequence.astype(np.uint8))
     return binary_sequence
 
 
@@ -130,9 +149,8 @@ def decoding_main():
 
     #combine = np.stack((binary, binary,np.zeros_like(binary)), axis=-1)
 
-    binary_code_hori = decode_gray(test_images[0:M-1], height_final, width_final)
-    binary_code_veri = decode_gray(test_images[M:-1], height_final, width_final)
-
+    binary_code_hori = decode_gray_otsu(test_images[0:M-1], height_final, width_final)
+    binary_code_veri = decode_gray_otsu(test_images[M:-1], height_final, width_final)
 
 
     #
