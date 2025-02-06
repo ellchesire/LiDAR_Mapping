@@ -5,8 +5,8 @@ import pickle
 
 
 def calibration():
-    M = 1
-    chess = (6,8)
+    M = 2
+    chess = (5,5)
 
     # termination criteria
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
@@ -19,7 +19,8 @@ def calibration():
 
     for x in range(M):
         #filename = f"IMG_{x+4555}.JPG"
-        filename = f"NORMAL{x+92:05d}.jpg"
+        #filename = f"cam_calibration\IMG_{x+4604}.jpg"
+        filename = f"cam_Calibration\CAM{x+1}.JPG"
         #1, 11
 
         img = cv2.imread(filename)
@@ -43,15 +44,17 @@ def calibration():
             #Draw and display the corners
             #
 
-    print(len(objpoints), len(imgpoints))
-    print(objpoints, imgpoints)
+    if(x == 1):
+        f = open('cam_img', 'wb')
+        pickle.dump(imgpoints, f)
+        f.close()
+
     ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints, imgpoints, gray.shape[::-1], None, None)
     print(ret)
 
     f= open('camera_calibration', 'wb')
     pickle.dump(mtx, f)
     pickle.dump(dist, f)
-    pickle.dump(imgpoints, f)
     f.close()
 
 calibration()

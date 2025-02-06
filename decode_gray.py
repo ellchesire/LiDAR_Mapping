@@ -115,7 +115,8 @@ def decoding_main():
     # brightness = 0
     for x in range(M*2):
         #filename = f"gray_code_images/NORMAL{x + 50:05d}.JPG"
-        filename = f"gray_code_images/IMG_{x+4527}.JPG"
+        filename = f"feb_six/IMG_{x+4577}.JPG"
+        #filename = f"gray_code_images/IMG_{x+4527}.JPG"
         img = cv2.imread(filename)
         if img is None:
             raise FileNotFoundError(f"Image not found: {filename}")
@@ -182,4 +183,4 @@ def decoding_main():
 
     return binary_code_hori, binary_code_hori
 
-decoding_main()
+#decoding_main()

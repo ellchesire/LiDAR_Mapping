@@ -1,11 +1,11 @@
 import numpy as np
 import cv2
 import pickle
-from decode_gray import decode_gray
+from decode_gray import decode_gray_otsu
 
 
 M = 6
-positions = 2
+positions = 1
 chessboard = (5,5)
 
 
@@ -96,7 +96,7 @@ def main():
 
     for y in range(positions):
         #need to make this for multiple positions
-        filename = "IMG_4458.JPG"
+        filename = f"cam_calibration\CAM{y+1}.JPG"
         img_corner = cv2.imread(filename)
 
         gray = cv2.cvtColor(img_corner, cv2.COLOR_BGR2GRAY)
@@ -106,7 +106,7 @@ def main():
 
         for x in range(M * 2):
             # filename = f"gray_code_images/NORMAL{x + 50:05d}.JPG"
-            filename = f"IMG_{x + 4459}.JPG"
+            filename = f"proj_calibration\IMG_{x + 4605}.JPG"
             img = cv2.imread(filename)
             if img is None:
                 raise FileNotFoundError(f"Image not found: {filename}")
@@ -117,23 +117,28 @@ def main():
             image_groups[y,x] = K
 
 
-        binary_code_hori = decode_gray(image_groups[y,0:M-1], height_final, width_final)
-        binary_code_veri = decode_gray(image_groups[y,M:-1], height_final, width_final)
+        binary_code_hori = decode_gray_otsu(image_groups[y,0:M-1], height_final, width_final)
+        binary_code_veri = decode_gray_otsu(image_groups[y,M:-1], height_final, width_final)
 
-        # cv2.imshow("veri", binary_code_veri.astype(np.uint8))
-        # cv2.imshow("hori", binary_code_hori.astype(np.uint8))
-        # cv2.waitKey(0)
-        # cv2.destroyAllWindows()
+        cv2.imshow("veri", binary_code_veri.astype(np.uint8))
+        cv2.imshow("hori", binary_code_hori.astype(np.uint8))
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
         decoded_combine = np.stack((binary_code_hori, binary_code_veri), axis=-1)
 
 
         homog = local_homographies(gray, corners_squeezed, decoded_combine)
         project_coords = project_img_coords(corners_squeezed, homog)
-
+        
+        
         objpoints_full.append(objp)
         imgpoints_full.append(np.array(project_coords, dtype=np.float32).reshape(-1, 1, 2))
-
+        
+        if(y==1):
+            f = open('proj_img', 'wb')
+            pickle.dump(imgpoints_full, f)
+            f.close()
 
 
     ret, mtx, dist, rvecs, tvecs = cv2.calibrateCamera(objpoints_full, imgpoints_full, gray.shape[::-1], None, None)
@@ -142,7 +147,6 @@ def main():
     f = open('projector_calibration', 'wb')
     pickle.dump(mtx, f)
     pickle.dump(dist, f)
-    pickle.dump(imgpoints_full, f)
     f.close()
 
 

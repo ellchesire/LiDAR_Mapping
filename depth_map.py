@@ -40,15 +40,20 @@ def main():
     f = open('camera_calibration', 'rb')
     cam_mtx = pickle.load(f)
     cam_dist = pickle.load(f)
+    
+    f.close()
+    
+    f = open('cam_img', 'rb')
     cam_imgpoints = pickle.load(f)
-
     f.close()
 
     f = open('projector_calibration', 'rb')
     proj_mtx = pickle.load(f)
     proj_dist = pickle.load(f)
+    f.close()
+    
+    f = open('proj_img', 'rb')
     proj_imgpoints = pickle.load(f)
-
     f.close()
 
     filename = "IMG_4458.JPG"
