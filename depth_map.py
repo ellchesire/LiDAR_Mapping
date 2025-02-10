@@ -3,8 +3,18 @@ import cv2
 import pickle
 from decode_gray import  decoding_main
 import matplotlib.pyplot as plt
+import open3d as o3d
+
 chessboard = (5,5)
 
+
+def display_point_cloud_o3d(points):
+    point_cloud = o3d.geometry.PointCloud()
+    point_cloud.points = o3d.utility.Vector3dVector(points)
+
+    #point_cloud.paint_uniform_color([0.5, 0.5, 0.5])
+    # Visualize the point cloud
+    o3d.visualization.draw_geometries([point_cloud])
 def triangulate_points(horizontal_indices, vertical_indices, cam_mtx, proj_mtx, R, T):
     height, width = horizontal_indices.shape
 
@@ -56,7 +66,7 @@ def main():
     proj_imgpoints = pickle.load(f)
     f.close()
 
-    filename = "IMG_4458.JPG"
+    filename = "cam_calibration/CAM2.JPG"
     img_corner = cv2.imread(filename)
 
     height_new, width_new, channel = img_corner.shape
@@ -68,6 +78,7 @@ def main():
     gray = cv2.cvtColor(img_corner, cv2.COLOR_BGR2GRAY)
     gray = cv2.resize(gray, (width_final, height_final))
 
+    print(len(cam_imgpoints), len(proj_imgpoints))
 
     ret, _, _, _, _, R, T, E, F = cv2.stereoCalibrate(
         objpoints,  # 3D object points
@@ -85,7 +96,9 @@ def main():
     hori, veri = decoding_main()
 
     points = triangulate_points(hori, veri, cam_mtx, proj_mtx, R, T)
+    #flattened_points = points.reshape((-1, 3))
 
+    #display_point_cloud_o3d(flattened_points)
     depth_map = points[:, :, 2]
 
     plt.figure(figsize=(8, 6))

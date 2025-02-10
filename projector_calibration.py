@@ -5,7 +5,7 @@ from decode_gray import decode_gray_otsu
 
 
 M = 6
-positions = 1
+positions = 3
 chessboard = (5,5)
 
 
@@ -18,16 +18,17 @@ def local_homographies(image, corners, decoded, patch_size=47):
 
         # extracting patches
         x1, y1 = max(0, x - half_size), max(0, y - half_size)
-        x2, y2 = min(image.shape[1], x + half_size), min(image.shape[0], y + half_size)
+        #x2, y2 = min(image.shape[1], x + half_size), min(image.shape[0], y + half_size)
+        x2, y2 = min(image.shape[1] - 1, x + half_size), min(image.shape[0] - 1, y + half_size)
 
         camera_pts = []
         projector_pts = []
 
+
         for i in range(y1, y2):
             for j in range(x1, x2):
-                    camera_pts.append([j, i])  # camera coordinates
-                    projector_pts.append(decoded[j, i])  # projector coordinates
-
+                    camera_pts.append([i, j])  # camera coordinates
+                    projector_pts.append(decoded[i, j])  # projector coordinates
         #  computing homographies
         camera_pts = np.array(camera_pts, dtype=np.float32)
         projector_pts = np.array(projector_pts, dtype=np.float32)
@@ -82,7 +83,7 @@ def main():
     objp = np.zeros((chessboard[0] * chessboard[1], 3), np.float32)
     objp[:, :2] = np.mgrid[0:chessboard[0], 0:chessboard[1]].T.reshape(-1, 2)
 
-    img_org = cv2.imread("IMG_4458.JPG")
+    img_org = cv2.imread("cam_calibration/CAM2.JPG")
     height_new, width_new, channel = img_org.shape
 
     width_final = 300
@@ -92,7 +93,10 @@ def main():
     image_groups = np.zeros((positions, M * 2, height_final, width_final), dtype=np.uint8)
 
     imgpoints_full = []
+    imgpoints_pic = []
     objpoints_full = []
+
+    offset = 4605
 
     for y in range(positions):
         #need to make this for multiple positions
@@ -105,25 +109,25 @@ def main():
         corners_squeezed = corners.squeeze()
 
         for x in range(M * 2):
-            # filename = f"gray_code_images/NORMAL{x + 50:05d}.JPG"
-            filename = f"proj_calibration\IMG_{x + 4605}.JPG"
+            #filename = f"gray_code_images/NORMAL{x + 50:05d}.JPG"
+            print(y, offset)
+            filename = f"proj_calibration\IMG_{offset}.JPG"
             img = cv2.imread(filename)
-            if img is None:
-                raise FileNotFoundError(f"Image not found: {filename}")
             img_grey = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
 
             K = cv2.resize(img_grey, (width_final, height_final))
             image_groups[y,x] = K
+
+            offset+=1
 
 
         binary_code_hori = decode_gray_otsu(image_groups[y,0:M-1], height_final, width_final)
         binary_code_veri = decode_gray_otsu(image_groups[y,M:-1], height_final, width_final)
 
-        cv2.imshow("veri", binary_code_veri.astype(np.uint8))
-        cv2.imshow("hori", binary_code_hori.astype(np.uint8))
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        # cv2.imshow("veri", binary_code_veri.astype(np.uint8))
+        # cv2.imshow("hori", binary_code_hori.astype(np.uint8))
+        # cv2.waitKey(0)
+        # cv2.destroyAllWindows()
 
         decoded_combine = np.stack((binary_code_hori, binary_code_veri), axis=-1)
 
@@ -136,8 +140,9 @@ def main():
         imgpoints_full.append(np.array(project_coords, dtype=np.float32).reshape(-1, 1, 2))
         
         if(y==1):
+            imgpoints_pic.append(np.array(project_coords, dtype=np.float32).reshape(-1, 1, 2))
             f = open('proj_img', 'wb')
-            pickle.dump(imgpoints_full, f)
+            pickle.dump(imgpoints_pic, f)
             f.close()
 
 

@@ -5,7 +5,7 @@ import pickle
 
 
 def calibration():
-    M = 2
+    M = 3
     chess = (5,5)
 
     # termination criteria
