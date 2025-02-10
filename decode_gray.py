@@ -55,38 +55,38 @@ def gray_to_binary(gray_code):
 
 
 #old code
-# def decode_gray(test_images, height, width):
-#
-#     # height, width = test_images[0].shape
-#
-#     gray_code = np.zeros((M, height, width), dtype=int)
-#
-#     for x in range(M-1):
-#         for col in range(height):
-#             for row in range(width):
-#
-#                 pixel_value = test_images[x][col, row] / 255.0
-#
-#                 #need a better algorithmn for this as well... this is not ideal
-#                 gray_code[x, col, row] = 0 if pixel_value > 0.5 else 1
-#
-#
-#
-#     gray_code_sequence = np.empty((height, width), dtype=object)
-#     binary_sequence = np.zeros((height, width), dtype=int)
-#
-#
-#
-#     for col in range(height):
-#         for row in range(width):
-#             gray_code_sequence[col, row] = ''.join(str(gray_code[x, col, row]) for x in range(M))
-#             binary_sequence[col, row] = gray_to_binary(gray_code_sequence[col, row])
-#
-#
-#     #cv2.imshow("Altered", binary_sequence_left.astype(np.uint8))
-#     #cv2.imshow("Original", binary_sequence.astype(np.uint8))
-#
-#     return binary_sequence
+def decode_gray(test_images, height, width):
+
+    # height, width = test_images[0].shape
+
+    gray_code = np.zeros((M, height, width), dtype=int)
+
+    for x in range(M-1):
+        for col in range(height):
+            for row in range(width):
+
+                pixel_value = test_images[x][col, row] / 255.0
+
+                #need a better algorithmn for this as well... this is not ideal
+                gray_code[x, col, row] = 0 if pixel_value > 0.5 else 1
+
+
+
+    gray_code_sequence = np.empty((height, width), dtype=object)
+    binary_sequence = np.zeros((height, width), dtype=int)
+
+
+
+    for col in range(height):
+        for row in range(width):
+            gray_code_sequence[col, row] = ''.join(str(gray_code[x, col, row]) for x in range(M))
+            binary_sequence[col, row] = gray_to_binary(gray_code_sequence[col, row])
+
+
+    #cv2.imshow("Altered", binary_sequence_left.astype(np.uint8))
+    #cv2.imshow("Original", binary_sequence.astype(np.uint8))
+
+    return binary_sequence
 
 def decode_gray_otsu(test_images, height, width):
     print("Decoding images...")
