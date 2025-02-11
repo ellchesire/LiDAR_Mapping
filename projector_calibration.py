@@ -5,7 +5,7 @@ from decode_gray import decode_gray_otsu
 
 
 M = 6
-positions = 3
+positions = 4
 chessboard = (5,5)
 
 
@@ -65,6 +65,7 @@ def proj_calibration(img_corners):
     criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
     objp = np.zeros((chessboard[0] * chessboard[1], 3), np.float32)
     objp[:, :2] = np.mgrid[0:chessboard[0], 0:chessboard[1]].T.reshape(-1, 2)
+    objp *= 2.5 #centimeters
 
     objpoints = []  # 3D points in world space
     imgpoints = [np.array(img_corners, dtype=np.float32).reshape(-1, 1, 2)]  # 2D points in image space
@@ -82,6 +83,7 @@ def proj_calibration(img_corners):
 def main():
     objp = np.zeros((chessboard[0] * chessboard[1], 3), np.float32)
     objp[:, :2] = np.mgrid[0:chessboard[0], 0:chessboard[1]].T.reshape(-1, 2)
+    #objp *= 2.3
 
     img_org = cv2.imread("cam_calibration/CAM2.JPG")
     height_new, width_new, channel = img_org.shape

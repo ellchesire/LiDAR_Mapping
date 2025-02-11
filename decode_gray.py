@@ -89,7 +89,6 @@ def decode_gray(test_images, height, width):
     return binary_sequence
 
 def decode_gray_otsu(test_images, height, width):
-    print("Decoding images...")
     gray_code = np.zeros((len(test_images), height, width), dtype=int)
 
     for x, img in enumerate(test_images):
@@ -110,7 +109,8 @@ def decode_gray_otsu(test_images, height, width):
 def decoding_main():
     for x in range(M*2):
         #filename = f"feb_six/IMG_{x+4577}.JPG"
-        filename = f"gray_code_images/IMG_{x+4527}.JPG"
+        #filename = f"gray_code_images/IMG_{x+4527}.JPG"
+        filename = f"feb11_pictures/IMG_{x+4678}.JPG"
         img = cv2.imread(filename)
         if img is None:
             raise FileNotFoundError(f"Image not found: {filename}")
@@ -132,8 +132,8 @@ def decoding_main():
     decoded_combine = np.stack((binary_code_hori, binary_code_veri), axis=-1)
 
 
-    visualize_projector_mapping(decoded_combine, axis = 'x')
-    visualize_projector_mapping(decoded_combine, axis='y')
+    # visualize_projector_mapping(decoded_combine, axis = 'x')
+    # visualize_projector_mapping(decoded_combine, axis='y')
 
 
     return binary_code_hori, binary_code_hori

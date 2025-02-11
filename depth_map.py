@@ -3,7 +3,8 @@ import cv2
 import pickle
 from decode_gray import  decoding_main
 import matplotlib.pyplot as plt
-import open3d as o3d
+#import open3d as o3d
+import time
 
 chessboard = (5,5)
 
@@ -41,8 +42,11 @@ def triangulate_points(horizontal_indices, vertical_indices, cam_mtx, proj_mtx, 
     return np.array(points_3D).reshape((height, width, 3))
 
 def main():
+    
+    now = time.time()
     objp = np.zeros((chessboard[0] * chessboard[1], 3), np.float32)
     objp[:, :2] = np.mgrid[0:chessboard[0], 0:chessboard[1]].T.reshape(-1, 2)
+    #objp *= 2.3 #centimeters
 
     objpoints = []
     objpoints.append(objp)
@@ -78,7 +82,7 @@ def main():
     gray = cv2.cvtColor(img_corner, cv2.COLOR_BGR2GRAY)
     gray = cv2.resize(gray, (width_final, height_final))
 
-    print(len(cam_imgpoints), len(proj_imgpoints))
+    # print(len(cam_imgpoints), len(proj_imgpoints))
 
     ret, _, _, _, _, R, T, E, F = cv2.stereoCalibrate(
         objpoints,  # 3D object points
@@ -100,6 +104,10 @@ def main():
 
     #display_point_cloud_o3d(flattened_points)
     depth_map = points[:, :, 2]
+    
+    end = time.time()
+    elapsed_time = end - now
+    print(elapsed_time)
 
     plt.figure(figsize=(8, 6))
     plt.imshow(depth_map, cmap='jet', interpolation='nearest')
