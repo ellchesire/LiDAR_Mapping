@@ -29,7 +29,6 @@ def calibration():
 
         ret, corners = cv2.findChessboardCorners(gray, (chess[0], chess[1]), None)
         
-
         # If found, add object points, image points (after refining them)
         print("Test Chessboard detection result:", x+1, ret)
         if ret == True:

@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 
 
-M = 6
+M = 8
 test_images = []
 
 def visualize_projector_mapping(camera_to_projector_mapping, axis='x'):
@@ -109,8 +109,12 @@ def decode_gray_otsu(test_images, height, width):
 def decoding_main():
     for x in range(M*2):
         #filename = f"feb_six/IMG_{x+4577}.JPG"
+        #filename = f"feb_12th/IMG_{x+4711}.JPG"
+        # if filename == "feb_six/IMG_4582.JPG":
+        #     continue
         #filename = f"gray_code_images/IMG_{x+4527}.JPG"
-        filename = f"feb11_pictures/IMG_{x+4678}.JPG"
+        #filename = f"feb11_pictures/IMG_{x+4678}.JPG"
+        filename = f"star_truck/IMG_{x+4759}.JPG"
         img = cv2.imread(filename)
         if img is None:
             raise FileNotFoundError(f"Image not found: {filename}")
