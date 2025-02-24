@@ -13,7 +13,7 @@ def calibration():
 
     objp = np.zeros((chess[0]*chess[1],3), np.float32)
     objp[:,:2] = np.mgrid[0:chess[0],0:chess[1]].T.reshape(-1,2)
-    #objp *= 2.3 #centimeters
+
 
     objpoints = []
     imgpoints = []

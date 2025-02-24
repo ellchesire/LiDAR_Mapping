@@ -3,19 +3,13 @@ import cv2
 import pickle
 from decode_gray import  decoding_main
 import matplotlib.pyplot as plt
-#import open3d as o3d
+import open3d as o3d
 import time
 
 chessboard = (5,5)
 
 
-def display_point_cloud_o3d(points):
-    point_cloud = o3d.geometry.PointCloud()
-    point_cloud.points = o3d.utility.Vector3dVector(points)
 
-    #point_cloud.paint_uniform_color([0.5, 0.5, 0.5])
-    # Visualize the point cloud
-    o3d.visualization.draw_geometries([point_cloud])
 def triangulate_points(horizontal_indices, vertical_indices, cam_mtx, proj_mtx, R, T):
     height, width = horizontal_indices.shape
 
@@ -46,7 +40,7 @@ def main():
     now = time.time()
     objp = np.zeros((chessboard[0] * chessboard[1], 3), np.float32)
     objp[:, :2] = np.mgrid[0:chessboard[0], 0:chessboard[1]].T.reshape(-1, 2)
-    #objp *= 2.3 #centimeters
+
 
     objpoints = []
     objpoints.append(objp)
@@ -100,9 +94,7 @@ def main():
     hori, veri = decoding_main()
 
     points = triangulate_points(hori, veri, cam_mtx, proj_mtx, R, T)
-    #flattened_points = points.reshape((-1, 3))
 
-    #display_point_cloud_o3d(flattened_points)
     depth_map = points[:, :, 2]
     
     end = time.time()
