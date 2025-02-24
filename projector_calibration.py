@@ -34,8 +34,8 @@ def local_homographies(image, corners, decoded, patch_size=47):
         projector_pts = np.array(projector_pts, dtype=np.float32)
 
         H, _ = cv2.findHomography(camera_pts, projector_pts, method=cv2.RANSAC)
-        homographies.append(H)
-
+        if H is not None:
+            homographies.append(H)
 
     return homographies
 
